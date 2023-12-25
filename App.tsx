@@ -12,7 +12,7 @@ import ListOld from './app/screens/ListOld';
 import ListSelfYoung from './app/screens/ListSelfYoung';
 
 const Stack = createNativeStackNavigator();
-
+const caca = ListYoung
 
 const App = () => {
   return (
