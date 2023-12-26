@@ -46,7 +46,7 @@ const DashboardOld = () => {
               <Text style={styles.loginTextButton}>Publier une annonce</Text>
             </TouchableOpacity>
             <Button title="Voir les annonces de jeunes" onPress={() => navigation.navigate('ListYoung')} />
-            <Button title="Voir mes annonces" onPress={() => navigation.navigate('ListYoung')} />
+            <Button title="Voir mes annonces" onPress={() => navigation.navigate('ListSelfOld')} />
             <Button title="Deconnexion" onPress={() => handleLogout(navigation)} />
         </View>
 

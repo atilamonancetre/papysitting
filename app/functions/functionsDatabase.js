@@ -1,4 +1,4 @@
-import { collection, query, where, getDocs, addDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, getDoc, addDoc, deleteDoc, doc, updateDoc} from 'firebase/firestore';
 import { FIREBASE_DB } from '../../FirebaseConfig';
 import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -64,8 +64,7 @@ export const postOld = async (title, description, availability, uid, setLoading,
   }
 };
 
-export const postYoung = async (title, description, availability, uid, setLoading) => {
-    const navigation = useNavigation();
+export const postYoung = async (title, description, availability, uid, setLoading, navigation) => {
     setLoading(true);
     // post the demand (title, description, and availability) to the database
     try {
@@ -96,3 +95,84 @@ export const postYoung = async (title, description, availability, uid, setLoadin
       setLoading(false);
     }
 };
+
+export const handleDeleteAnnonceJeunes = async (annonceId, setAnnonces) => {
+    try {
+        const annoncesCollection = collection(FIREBASE_DB, 'annoncesJeunes');
+        await deleteDoc(doc(annoncesCollection, annonceId));
+        // Mettez à jour l'état des annonces après la suppression
+        setAnnonces((prevAnnonces) => prevAnnonces.filter((annonce) => annonce.id !== annonceId));
+    } catch (error) {
+        console.error('Erreur lors de la suppression de l\'annonce :', error);
+    }
+};
+
+export const handleDeleteAnnonceVieux = async (annonceId, setAnnonces) => {
+    try {
+        const annoncesCollection = collection(FIREBASE_DB, 'annoncesVieux');
+        await deleteDoc(doc(annoncesCollection, annonceId));
+        // Mettez à jour l'état des annonces après la suppression
+        setAnnonces((prevAnnonces) => prevAnnonces.filter((annonce) => annonce.id !== annonceId));
+    } catch (error) {
+        console.error('Erreur lors de la suppression de l\'annonce :', error);
+    }
+};
+
+export const updateAnnonceJeunes = async (annonceId, updatedDetails) => {
+    const annoncesCollection = doc(FIREBASE_DB, 'annoncesJeunes', annonceId);
+
+    try {
+        await updateDoc(annoncesCollection, updatedDetails);
+        console.log('Annonce mise à jour avec succès.');
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour de l\'annonce :', error);
+        throw error;
+    }
+};
+
+export const getAnnonceJeunesDetails = async (annonceId) => {
+    const annoncesCollection = doc(FIREBASE_DB, 'annoncesJeunes', annonceId);
+
+    try {
+        const annonceSnapshot = await getDoc(annoncesCollection);
+
+        if (annonceSnapshot.exists()) {
+            return { id: annonceSnapshot.id, ...annonceSnapshot.data() };
+        } else {
+            throw new Error('Annonce non trouvée.');
+        }
+    } catch (error) {
+        console.error('Erreur lors de la récupération des détails de l\'annonce :', error);
+        throw error;
+    }
+};
+
+export const updateAnnonceVieux = async (annonceId, updatedDetails) => {
+    const annoncesCollection = doc(FIREBASE_DB, 'annoncesVieux', annonceId);
+
+    try {
+        await updateDoc(annoncesCollection, updatedDetails);
+        console.log('Annonce mise à jour avec succès.');
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour de l\'annonce :', error);
+        throw error;
+    }
+};
+
+export const getAnnonceVieuxDetails = async (annonceId) => {
+    const annoncesCollection = doc(FIREBASE_DB, 'annoncesVieux', annonceId);
+
+    try {
+        const annonceSnapshot = await getDoc(annoncesCollection);
+
+        if (annonceSnapshot.exists()) {
+            return { id: annonceSnapshot.id, ...annonceSnapshot.data() };
+        } else {
+            throw new Error('Annonce non trouvée.');
+        }
+    } catch (error) {
+        console.error('Erreur lors de la récupération des détails de l\'annonce :', error);
+        throw error;
+    }
+};
+

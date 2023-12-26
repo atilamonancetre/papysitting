@@ -13,6 +13,7 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         alignItems: 'center',
       },
+
       availabilityContainer: {
         marginTop: 10,
         backgroundColor: neu2,
@@ -20,6 +21,32 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         width: '90%',
       },
+
+    editButton : {
+        backgroundColor: 'gray',
+        padding: 10,
+        borderRadius: 5,
+        marginTop: 10,
+        alignItems: 'center',
+    },
+
+    editButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
+
+    deleteButton: {
+        backgroundColor: 'red',
+        padding: 10,
+        borderRadius: 5,
+        marginTop: 10,
+        alignItems: 'center',
+    },
+    deleteButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
+
     dayLabel: {
         fontSize: 18,
         fontWeight: 'bold',

@@ -4,7 +4,7 @@ import { NavigationProp } from "@react-navigation/native";
 import { FIREBASE_AUTH, FIREBASE_DB } from "../../FirebaseConfig";
 import { collection, getDocs, where, query } from 'firebase/firestore';
 import styles from "../styles/styles";
-import {handleDeleteAnnonceJeunes} from '../functions/functionsDatabase';
+import {handleDeleteAnnonceVieux} from '../functions/functionsDatabase';
 
 interface RouterProps {
     navigation: NavigationProp<any, any>;
@@ -32,7 +32,7 @@ const ListSelfYoung = ({ navigation }: RouterProps) => {
         const fetchAnnonces = async () => {
             if (user) {
                 console.log('user: ' + user)
-                const annoncesCollection = collection(FIREBASE_DB, 'annoncesJeunes');
+                const annoncesCollection = collection(FIREBASE_DB, 'annoncesVieux');
                 const q = query(annoncesCollection, where('prenom', '==', user.uid));
                 const annoncesSnapshot = await getDocs(q);
                 const annoncesData = [];
@@ -80,14 +80,14 @@ const ListSelfYoung = ({ navigation }: RouterProps) => {
 
                         <TouchableOpacity
                             style={styles.deleteButton}
-                            onPress={() => handleDeleteAnnonceJeunes(item.id, setAnnonces)}
+                            onPress={() => handleDeleteAnnonceVieux(item.id, setAnnonces)}
                         >
                             <Text style={styles.deleteButtonText}>Supprimer</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
                             style={styles.editButton}
-                            onPress={() => navigation.navigate('EditAnnonce', { annonceId: item.id })}
+                            onPress={() => navigation.navigate('EditAnnonceOld', { annonceId: item.id })}
                         >
                             <Text style={styles.editButtonText}>Modifier</Text>
                         </TouchableOpacity>

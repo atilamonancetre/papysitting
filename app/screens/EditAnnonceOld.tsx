@@ -1,45 +1,46 @@
+// EditAnnonceYoung.js
 import React, { useEffect, useState } from "react";
-import { View, Text, ActivityIndicator, Button, KeyboardAvoidingView, TextInput, ScrollView } from "react-native";
+import { View, Text, Button, KeyboardAvoidingView, TextInput, ScrollView, ActivityIndicator } from "react-native";
 import { CheckBox } from "react-native-elements";
-import { postYoung } from "../functions/functionsDatabase";
-import { FIREBASE_AUTH } from "../../FirebaseConfig";
+import { updateAnnonceVieux, getAnnonceVieuxDetails} from "../functions/functionsDatabase";
 import styles from "../styles/styles";
 
 const daysOfWeek = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
 
-const Meeting = () => {
+const EditAnnonceOld = ({ route, navigation }) => {
+    const { annonceId } = route.params;
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [selectedDays, setSelectedDays] = useState([]);
     const [availability, setAvailability] = useState({});
-    const [uid, setUid] = useState('');
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchAnnonceDetails = async () => {
             try {
-                const user = FIREBASE_AUTH.currentUser;
+                const annonceDetails = await getAnnonceVieuxDetails(annonceId);
 
-                if (user) {
-                    const uid = user.uid;
-                    setUid(uid);
-                } else {
-                    console.error('Utilisateur non connecté');
-                }
+                setTitle(annonceDetails.titre);
+                setDescription(annonceDetails.description);
+                setAvailability(annonceDetails.disponibilites);
+                setSelectedDays(Object.keys(annonceDetails.disponibilites));
+
+                setLoading(false);
             } catch (error) {
-                console.error('Erreur lors de la récupération des données utilisateur :', error);
+                console.error('Erreur lors de la récupération des détails de l\'annonce :', error);
+                // Affichez un message d'erreur ou effectuez une action appropriée
+                setLoading(false);
             }
         };
 
-        fetchData();
-    }, []);
+        fetchAnnonceDetails();
+    }, [annonceId]);
 
     const handleDaySelection = (day) => {
-        // Si le jour est déjà sélectionné, désélectionnez-le
+        // Gérez la sélection des jours
         if (selectedDays.includes(day)) {
             setSelectedDays((prevSelectedDays) => prevSelectedDays.filter((selectedDay) => selectedDay !== day));
         } else {
-            // Si le jour n'est pas sélectionné, ajoutez-le
             setSelectedDays((prevSelectedDays) => [...prevSelectedDays, day]);
         }
 
@@ -52,7 +53,7 @@ const Meeting = () => {
     };
 
     const handleAvailabilityToggle = (day, time) => {
-        // Mettez à jour l'état d'accessibilité pour le jour et le temps sélectionnés
+        // Gérez la bascule de disponibilité
         setAvailability((prevAvailability) => ({
             ...prevAvailability,
             [day]: {
@@ -60,6 +61,33 @@ const Meeting = () => {
                 [time]: !prevAvailability[day][time],
             },
         }));
+    };
+
+    const handleUpdate = async () => {
+        // Effectuez les validations nécessaires ici avant la mise à jour
+        if (!title || !description || selectedDays.length === 0) {
+            // Affichez un message d'erreur ou effectuez une action appropriée
+            return;
+        }
+
+        try {
+            setLoading(true);
+            const updatedDetails = {
+                titre: title,
+                description: description,
+                disponibilites: availability,
+            };
+
+            await updateAnnonceVieux(annonceId, updatedDetails);
+
+            // Redirigez l'utilisateur vers la page de liste après la mise à jour
+            navigation.navigate('ListSelfOld');
+        } catch (error) {
+            console.error('Erreur lors de la mise à jour de l\'annonce :', error);
+            // Affichez un message d'erreur ou effectuez une action appropriée
+        } finally {
+            setLoading(false);
+        }
     };
 
     const renderAvailabilityCheckboxes = () => {
@@ -96,6 +124,10 @@ const Meeting = () => {
         ));
     };
 
+    if (loading) {
+        return <ActivityIndicator size="large" color="#0000f" />;
+    }
+
     return (
         <ScrollView style={styles.scrollContainer}>
             <KeyboardAvoidingView behavior="padding" style={styles.container}>
@@ -114,16 +146,17 @@ const Meeting = () => {
                     onChangeText={(text) => setDescription(text)}
                 />
 
+                {/* Render the availability checkboxes */}
                 {renderAvailabilityCheckboxes()}
 
                 {loading ? (
                     <ActivityIndicator size="large" color="#0000f" />
                 ) : (
-                    <Button title="Post" onPress={() => postYoung(title, description, availability, uid, setLoading)} />
+                    <Button title="Update" onPress={() => handleUpdate()} />
                 )}
             </KeyboardAvoidingView>
         </ScrollView>
     );
 };
 
-export default Meeting;
+export default EditAnnonceOld;

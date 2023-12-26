@@ -10,9 +10,12 @@ import MeetingYoung from "./app/screens/MeetingYoung"
 import ListYoung from './app/screens/ListYoung';
 import ListOld from './app/screens/ListOld';
 import ListSelfYoung from './app/screens/ListSelfYoung';
+import ListSelfOld from './app/screens/ListSelfOld';
+import EditAnnonceYoung from './app/screens/EditAnnonceYoung';
+import EditAnnonceOld from './app/screens/EditAnnonceOld';
+
 
 const Stack = createNativeStackNavigator();
-const caca = ListYoung
 
 const App = () => {
   return (
@@ -26,7 +29,12 @@ const App = () => {
         <Stack.Screen name="ListOld" component={ListOld} />
         <Stack.Screen name="ListYoung" component={ListYoung} />
         <Stack.Screen name="ListSelfYoung" component={ListSelfYoung} />
+        <Stack.Screen name="ListSelfOld" component={ListSelfOld} />
         <Stack.Screen name="RegisterOld" component={RegisterOld} />
+        <Stack.Screen name="EditAnnonceYoung" component={EditAnnonceYoung} />
+        <Stack.Screen name="EditAnnonceOld" component={EditAnnonceOld} />
+
+
       </Stack.Navigator>
     </NavigationContainer>
   );
